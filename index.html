@@ -69,19 +69,6 @@ button:active {
   font-size: 20px;
 }
 
-/* ===== TIM BAY ===== */
-.heart {
-  position: fixed;
-  animation: floatUp 2.5s ease-out forwards;
-  pointer-events: none;
-}
-
-@keyframes floatUp {
-  0% { transform: translateY(0) scale(1); opacity: 1; }
-  100% { transform: translateY(-220px) scale(2) rotate(360deg); opacity: 0; }
-}
-
-/* ===== RUNG ===== */
 @keyframes shake {
   0% { transform: translateX(0); }
   25% { transform: translateX(-6px); }
@@ -150,36 +137,6 @@ let typingInterval;
 
 const textEl = document.getElementById("text");
 const choicesEl = document.getElementById("choices");
-const hearts = ["💖","💕","💘","❤️","💗"];
-
-/* ===== TIM ===== */
-function createHeart(x, y) {
-  const h = document.createElement("div");
-  h.className = "heart";
-  h.innerHTML = hearts[Math.floor(Math.random() * hearts.length)];
-  h.style.left = x + "px";
-  h.style.top = y + "px";
-  h.style.fontSize = 16 + Math.random() * 22 + "px";
-  document.body.appendChild(h);
-  setTimeout(() => h.remove(), 2500);
-}
-
-function heartBurstFromButton(btn, count = 12) {
-  const rect = btn.getBoundingClientRect();
-  for (let i = 0; i < count; i++) {
-    setTimeout(() => {
-      createHeart(
-        rect.left + rect.width / 2 + (Math.random() * 40 - 20),
-        rect.top
-      );
-    }, i * 80);
-  }
-}
-
-function shakeScreen() {
-  document.body.style.animation = "shake 0.3s";
-  setTimeout(() => document.body.style.animation = "", 300);
-}
 
 /* ===== GÕ CHỮ ===== */
 function typeText(text) {
@@ -243,3 +200,4 @@ typeText(storyData[0].text);
 </script>
 </body>
 </html>
+
