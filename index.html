@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💖 Đọc một chút đi nà 💖</title>
+
+<!-- ===== PWA ===== -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#ff7eb3">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="pink">
+
+<style>
+body {
+  margin: 0;
+  background: #fff0f6;
+  font-family: "Segoe UI", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.card {
+  background: white;
+  width: 90%;
+  max-width: 420px;
+  border-radius: 30px;
+  padding: 24px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+  text-align: center;
+  position: relative;
+}
+
+.text {
+  font-size: 22px;
+  min-height: 120px;
+  margin-bottom: 20px;
+  color: #3a173a;
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 16px;
+  font-size: 16px;
+  background: #ff7eb3;
+  color: white;
+  cursor: pointer;
+}
+
+button:active {
+  transform: scale(0.96);
+}
+
+/* ===== NÚT NHẠC ===== */
+.music-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: #ffd6e7;
+  color: #ff3f8b;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  font-size: 20px;
+}
+
+/* ===== TIM BAY ===== */
+.heart {
+  position: fixed;
+  animation: floatUp 2.5s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-220px) scale(2) rotate(360deg); opacity: 0; }
+}
+
+/* ===== RUNG ===== */
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-6px); }
+  100% { transform: translateX(0); }
+}
+</style>
+</head>
+
+<body>
+<div class="card">
+  <button class="music-btn" id="musicBtn">🎵</button>
+  <div class="text" id="text"></div>
+  <div id="choices"></div>
+</div>
+
+<!-- 🎵 NHẠC NỀN -->
+<audio id="bgm" loop>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+// ===== STORY =====
+const storyData = [
+  {
+    text: "Ê m còn nhớ lần đầu chúng quen nhau không?",
+    choices: ["CÓ 💕", "Ờ 😅", "CHỊU"],
+    next: [1, 1, 6]
+  },
+  {
+    text: "Bít gì không",
+    choices: ["stop", "không nói sao biết", "đéo quan tâm"],
+    next: [6, 2, 6]
+  },
+  {
+    text: "Giờ sao nhỉ.",
+    choices: ["Ai mà biết", "Thì nói đi"],
+    next: [4, 4]
+  },
+  {
+    text: "Tối đi chơi khum :3💖",
+    choices: ["Uci(nhắn mess nha)", "KHÔNG(nhắn mess đi)"],
+    next: [null]
+  },
+  {
+    text: "Hình như t đã thích m ngay từ lúc đó.",
+    choices: ["THÌ?", "O_O 💖"],
+    next: [5, 3]
+  },
+  {
+    text: ";')))) giờ như tk hề",
+    choices: ["ừ", "..."],
+    next: [6, 6]
+  },
+  {
+    text: "Thôi quên nó đi",
+    choices: ["..."],
+    next: [null]
+  }
+];
+
+let index = 0;
+let charIndex = 0;
+let typingInterval;
+
+const textEl = document.getElementById("text");
+const choicesEl = document.getElementById("choices");
+const hearts = ["💖","💕","💘","❤️","💗"];
+
+/* ===== TIM ===== */
+function createHeart(x, y) {
+  const h = document.createElement("div");
+  h.className = "heart";
+  h.innerHTML = hearts[Math.floor(Math.random() * hearts.length)];
+  h.style.left = x + "px";
+  h.style.top = y + "px";
+  h.style.fontSize = 16 + Math.random() * 22 + "px";
+  document.body.appendChild(h);
+  setTimeout(() => h.remove(), 2500);
+}
+
+function heartBurstFromButton(btn, count = 12) {
+  const rect = btn.getBoundingClientRect();
+  for (let i = 0; i < count; i++) {
+    setTimeout(() => {
+      createHeart(
+        rect.left + rect.width / 2 + (Math.random() * 40 - 20),
+        rect.top
+      );
+    }, i * 80);
+  }
+}
+
+function shakeScreen() {
+  document.body.style.animation = "shake 0.3s";
+  setTimeout(() => document.body.style.animation = "", 300);
+}
+
+/* ===== GÕ CHỮ ===== */
+function typeText(text) {
+  textEl.innerHTML = "";
+  choicesEl.innerHTML = "";
+  charIndex = 0;
+
+  typingInterval = setInterval(() => {
+    if (charIndex < text.length) {
+      textEl.innerHTML += text.charAt(charIndex++);
+    } else {
+      clearInterval(typingInterval);
+      showChoices();
+    }
+  }, 45);
+}
+
+function showChoices() {
+  storyData[index].choices.forEach((choice, i) => {
+    const btn = document.createElement("button");
+    btn.textContent = choice;
+    btn.onclick = () => nextScene(i, btn);
+    choicesEl.appendChild(btn);
+  });
+}
+
+function nextScene(i, btn) {
+  if (i === 0) heartBurstFromButton(btn, 16);
+  if (i === 1) heartBurstFromButton(btn, 6);
+  if (i === 2) shakeScreen();
+
+  const next = storyData[index].next[i];
+  if (next === null) {
+    textEl.innerHTML = "💖 Cảm ơn m đã chơi 💖";
+    choicesEl.innerHTML = "";
+    heartBurstFromButton(btn, 30);
+  } else {
+    index = next;
+    typeText(storyData[index].text);
+  }
+}
+
+/* ===== NHẠC ===== */
+const bgm = document.getElementById("bgm");
+const musicBtn = document.getElementById("musicBtn");
+let musicOn = false;
+
+musicBtn.onclick = () => {
+  if (musicOn) {
+    bgm.pause();
+    musicBtn.textContent = "🔇";
+  } else {
+    bgm.play();
+    musicBtn.textContent = "🎵";
+  }
+  musicOn = !musicOn;
+};
+
+// ===== START =====
+typeText(storyData[0].text);
+</script>
+</body>
+</html>
