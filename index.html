@@ -56,19 +56,7 @@ button:active {
   transform: scale(0.96);
 }
 
-/* ===== NÚT NHẠC ===== */
-.music-btn {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  background: #ffd6e7;
-  color: #ff3f8b;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  font-size: 20px;
-}
-
+/* ===== RUNG ===== */
 @keyframes shake {
   0% { transform: translateX(0); }
   25% { transform: translateX(-6px); }
@@ -85,11 +73,6 @@ button:active {
   <div class="text" id="text"></div>
   <div id="choices"></div>
 </div>
-
-<!-- 🎵 NHẠC NỀN -->
-<audio id="bgm" loop>
-  <source src="music.mp3" type="audio/mpeg">
-</audio>
 
 <script>
 // ===== STORY =====
@@ -110,7 +93,7 @@ const storyData = [
     next: [4, 4]
   },
   {
-    text: "Tối đi chơi khum :3(h lại hoãn r ;)))💖",
+    text: "Tối đi chơi khum :3💖",
     choices: ["Uci(nhắn mess nha)", "KHÔNG(nhắn mess đi)"],
     next: [null]
   },
@@ -179,26 +162,8 @@ function nextScene(i, btn) {
   }
 }
 
-/* ===== NHẠC ===== */
-const bgm = document.getElementById("bgm");
-const musicBtn = document.getElementById("musicBtn");
-let musicOn = false;
-
-musicBtn.onclick = () => {
-  if (musicOn) {
-    bgm.pause();
-    musicBtn.textContent = "🔇";
-  } else {
-    bgm.play();
-    musicBtn.textContent = "🎵";
-  }
-  musicOn = !musicOn;
-};
-
 // ===== START =====
 typeText(storyData[0].text);
 </script>
 </body>
 </html>
-
-
