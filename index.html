@@ -67,13 +67,6 @@ button:active {
 </style>
 </head>
 
-<body>
-<div class="card">
-  <button class="music-btn" id="musicBtn">🎵</button>
-  <div class="text" id="text"></div>
-  <div id="choices"></div>
-</div>
-
 <script>
 // ===== STORY =====
 const storyData = [
@@ -145,12 +138,6 @@ function showChoices() {
     choicesEl.appendChild(btn);
   });
 }
-
-function nextScene(i, btn) {
-  if (i === 0) heartBurstFromButton(btn, 16);
-  if (i === 1) heartBurstFromButton(btn, 6);
-  if (i === 2) shakeScreen();
-
   const next = storyData[index].next[i];
   if (next === null) {
     textEl.innerHTML = "💖 Cảm ơn m đã chơi 💖";
@@ -167,3 +154,4 @@ typeText(storyData[0].text);
 </script>
 </body>
 </html>
+
