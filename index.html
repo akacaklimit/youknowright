@@ -5,12 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>💖 Đọc một chút đi nà 💖</title>
 
-<!-- ===== PWA ===== -->
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#ff7eb3">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="pink">
-
 <style>
 body {
   margin: 0;
@@ -56,7 +50,7 @@ button:active {
   transform: scale(0.96);
 }
 
-/* ===== RUNG ===== */
+/* RUNG */
 @keyframes shake {
   0% { transform: translateX(0); }
   25% { transform: translateX(-6px); }
@@ -64,8 +58,22 @@ button:active {
   75% { transform: translateX(-6px); }
   100% { transform: translateX(0); }
 }
+
+/* TIM BAY */
+@keyframes fly {
+  to {
+    transform: translateY(-80px);
+    opacity: 0;
+  }
+}
 </style>
 </head>
+
+<body>
+<div class="card">
+  <div class="text" id="text"></div>
+  <div id="choices"></div>
+</div>
 
 <script>
 // ===== STORY =====
@@ -87,8 +95,8 @@ const storyData = [
   },
   {
     text: "Tối đi chơi khum :3💖",
-    choices: ["Uci(nhắn mess nha)", "KHÔNG(nhắn mess đi)"],
-    next: [null]
+    choices: ["Uci (nhắn mess nha)", "KHÔNG (nhắn mess đi)"],
+    next: [null, null]
   },
   {
     text: "do you want to be my girlfriend.",
@@ -114,7 +122,7 @@ let typingInterval;
 const textEl = document.getElementById("text");
 const choicesEl = document.getElementById("choices");
 
-/* ===== GÕ CHỮ ===== */
+// ===== GÕ CHỮ =====
 function typeText(text) {
   textEl.innerHTML = "";
   choicesEl.innerHTML = "";
@@ -138,14 +146,42 @@ function showChoices() {
     choicesEl.appendChild(btn);
   });
 }
+
+function nextScene(i, btn) {
+  if (i === 0) heartBurstFromButton(btn, 16);
+  if (i === 1) heartBurstFromButton(btn, 8);
+  if (i === 2) shakeScreen();
+
   const next = storyData[index].next[i];
   if (next === null) {
     textEl.innerHTML = "💖 Cảm ơn m đã chơi 💖";
     choicesEl.innerHTML = "";
-    heartBurstFromButton(btn, 30);
+    heartBurstFromButton(btn, 24);
   } else {
     index = next;
     typeText(storyData[index].text);
+  }
+}
+
+// ===== HIỆU ỨNG =====
+function shakeScreen() {
+  const card = document.querySelector(".card");
+  card.style.animation = "shake 0.4s";
+  setTimeout(() => card.style.animation = "", 400);
+}
+
+function heartBurstFromButton(btn, count) {
+  for (let i = 0; i < count; i++) {
+    const heart = document.createElement("div");
+    heart.textContent = "💖";
+    heart.style.position = "fixed";
+    const rect = btn.getBoundingClientRect();
+    heart.style.left = rect.left + rect.width / 2 + "px";
+    heart.style.top = rect.top + "px";
+    heart.style.fontSize = "18px";
+    heart.style.animation = "fly 1s ease-out forwards";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 1000);
   }
 }
 
@@ -154,4 +190,3 @@ typeText(storyData[0].text);
 </script>
 </body>
 </html>
-
